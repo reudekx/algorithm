@@ -22,7 +22,8 @@
         이때, 사이클의 발생 여부를 확인 하기 위해 '서로소 집합'을 이용하며, union-find 연산을 정의함으로써 구현할 수 있다.
             서로소 집합) 정점들은 한번에 하나의 집합(트리)에만 속한다.
             union 연산) 간선의 두 정점이 속한 집합을 하나로 합친다. (=하나의 트리로 만든다.)
-            find 연산) 간선의 두 정점이 동일한 집합에 속해있는지 확인한다. (=만약 동일한 집합에 속해있다면 해당 간선을 선택했을 때 사이클이 발생하게 된다.)
+            find 연산) 정점의 소속 집합을 확인한다. (=두 정점에 대해 find 연산을 수행하여,
+                만약 동일한 집합에 속해있다면(find(a) == find(b)인 경우) 해당 간선을 선택했을 때 사이클이 발생하게 된다.)
 
     b) 프림 알고리즘 O((V + E) * logV) = O(E * logV)
         1. 시작 정점을 하나 골라 (0=가중치, 정점)의 형태로 우선순위 큐에 넣는다.
@@ -33,5 +34,59 @@
         다익스트라 알고리즘과 비슷한 방식으로 구현된다.
 
 
+'''
 
 '''
+준비) 일단 먼저 유니온 파인드 먼저 구현해보자
+
+union 함수 안에서 find 함수를 호출하므로 find 함수 먼저 구현.
+
+find 함수의 역할 -> 부모
+
+'''
+
+def debug(n):
+    print("===== Print i and find(i) =====")
+    for i in range(n):
+        print(f"i = {i}, find(i) = {find(i)}")
+
+def find(p, x):
+    if p[x] != x:
+        p[x] = find(p[x])
+    return p[x]
+
+def union(p, a, b):
+    a = find(a)
+    b = find(b)
+    if a < b:
+        p[b] = a
+    else:
+        p[a] = b
+
+'''
+A) 크루스칼 알고리즘
+'''
+
+from collections import namedtuple
+
+v = 3
+e = 3
+
+Edge = namedtuple("Edge", "cost, v1, v2")
+
+edges = [
+    Edge(1, 2, 1),
+    Edge(2, 3, 2),
+    Edge(1, 3, 3),
+]
+
+print(edges)
+
+edges.sort()
+
+print(edges)
+
+def kruskal():
+    parent = [i for i in range(v)]
+
+    
