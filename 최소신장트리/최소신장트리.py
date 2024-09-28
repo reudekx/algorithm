@@ -17,7 +17,7 @@
         1. 간선들을 가중치를 기준으로 오름차순 정렬한다.
         2. 간선을 하나씩 확인한다.
             해당 간선을 선택함으로써 사이클이 발생하지 않는 경우에만 간선을 선택한다.
-        3. V - 1개의 간선이 선택될 때까지 반복한다. (결과적으로 V개의 정점이 선택됨)
+        3. V - 1개의 간선이 선택될 때까지 2번을 반복한다. (결과적으로 V개의 정점이 선택됨)
 
         이때, 사이클의 발생 여부를 확인 하기 위해 '서로소 집합'을 이용하며, union-find 연산을 정의함으로써 구현할 수 있다.
             서로소 집합) 정점들은 한번에 하나의 집합(트리)에만 속한다.
@@ -27,9 +27,9 @@
 
     b) 프림 알고리즘 O((V + E) * logV) = O(E * logV)
         1. 시작 정점을 하나 골라 (0=가중치, 정점)의 형태로 우선순위 큐에 넣는다.
-        2. 우선순위 큐에서 가중치가 가장 적은 정점을 하나 꺼낸다.
-        3. 해당 정점의 주위 간선들을 가중치와 함께 우선순위 큐에 넣는다. 
-        4. 우선순위 큐가 빌 때까지 2, 3번을 반복한다.
+        2. 우선순위 큐에서 가중치가 가장 적은 정점을 하나 꺼내 선택한다. (MST에 포함시킨다.)
+        3. 해당 정점의 주위 정점들을 간선 가중치와 함께 우선순위 큐에 넣는다. 
+        4. V개의 정점이 선택될 때까지 2, 3번을 반복한다.
 
         다익스트라 알고리즘과 비슷한 방식으로 구현된다.
 
@@ -45,19 +45,14 @@ find 함수의 역할 -> 부모
 
 '''
 
-def debug(n):
-    print("===== Print i and find(i) =====")
-    for i in range(n):
-        print(f"i = {i}, find(i) = {find(i)}")
-
 def find(p, x):
     if p[x] != x:
-        p[x] = find(p[x])
+        p[x] = find(p, p[x])
     return p[x]
 
 def union(p, a, b):
-    a = find(a)
-    b = find(b)
+    a = find(p, a)
+    b = find(p, b)
     if a < b:
         p[b] = a
     else:
@@ -67,26 +62,85 @@ def union(p, a, b):
 A) 크루스칼 알고리즘
 '''
 
-from collections import namedtuple
+class Edge:
+    def __init__(self, v1, v2, cost):
+        self.v1 = v1
+        self.v2 = v2
+        self.cost = cost
+
+    def __lt__(self, other):
+        return self.cost < other.cost
 
 v = 3
 e = 3
 
-Edge = namedtuple("Edge", "cost, v1, v2")
-
 edges = [
-    Edge(1, 2, 1),
-    Edge(2, 3, 2),
-    Edge(1, 3, 3),
+    Edge(0, 1, 1),
+    Edge(1, 2, 2),
+    Edge(0, 2, 3),
 ]
 
-print(edges)
+def kruskal(v, e, edges):
+    edges.sort()
 
-edges.sort()
-
-print(edges)
-
-def kruskal():
     parent = [i for i in range(v)]
+    cnt = 0
+    cost = 0
 
+    for edge in edges:
+        if find(parent, edge.v1) == find(parent, edge.v2):
+            continue
+        union(parent, edge.v1, edge.v2)
+        cnt += 1
+        cost += edge.cost
+        if cnt == v - 1:
+            break
     
+    return cost
+
+print(kruskal(v, e, edges)) # 3
+
+'''
+B) 프림 알고리즘
+'''
+
+from heapq import heappush, heappop
+
+v = 3
+e = 3
+
+class Node:
+    def __init__(self, v, cost):
+        self.v = v
+        self.cost = cost
+
+    def __lt__(self, other):
+        return self.cost < other.cost
+
+edges = [
+    [Node(1, 1), Node(2, 3)],
+    [Node(0, 1), Node(2, 2)],
+    [Node(1, 2), Node(0, 3)],
+]
+
+def prim(v, e, edges):
+    visited = [False for _ in range(v)]
+    heap = [Node(0, 0)]
+    cnt = 0
+    cost = 0
+    while heap:
+        cur = heappop(heap)
+        if visited[cur.v]:
+            continue
+        visited[cur.v] = True
+        cnt += 1
+        cost += cur.cost
+        if cnt == v:
+            break
+        for nxt in edges[cur.v]:
+            if visited[nxt.v]:
+                continue
+            heappush(heap, nxt)
+    return cost
+
+print(prim(v, e, edges))
