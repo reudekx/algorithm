@@ -15,7 +15,7 @@ from itertools import permutations, combinations
     한 원소를 선택했으면, 해당 원소의 인덱스를 포함하여 다음 인덱스 중에서 선택
 
 공통)
-    generator 함수를 정의하여 이를 실행하여 생성된 객체를 반환하는 wrapper 함수 구현하면 됨.
+    generator 함수를 정의하고 이를 실행하여 생성된 객체를 반환하는 wrapper 함수 구현하면 됨.
 
 각각의 규칙을 외울 필요는 없고, chosen 배열을 하나씩 채워넣는다는 것만 기억하면 됨
     
