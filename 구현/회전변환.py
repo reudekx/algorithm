@@ -4,10 +4,15 @@
 transpose와 flip 함수를 조합하여 rotate함수를 구현할 수 있다.
 
 가령 (시계방향으로) 90도 회전인 경우, transpose후 horizontal flip을 수행하면 된다.
+
+추가)
+    transpose 함수의 경우 matrix를 각 원소(row)들로 분해하여 zip 함수를 통해 열을 행으로 변환할 수 있다. -> 이게 더 쉬운 방법
 '''
 
+
 def transpose(matrix):
-    return [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
+    # return [[matrix[i][j] for i in range(len(matrix))] for j in range(len(matrix[0]))]
+    return [list(row) for row in zip(*matrix)]
 
 def horizontal_flip(matrix):
     # return [matrix[i][::-1] for i in range(len(matrix))]
