@@ -38,7 +38,6 @@ def solve(n, wires):
 def solution(n, wires):
     answer = solve(n, wires)
     return answer
-
 '''
 풀이 시간: 7분
 접근:
